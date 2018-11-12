@@ -4,11 +4,14 @@ import com.intellij.psi.*;
 import com.intellij.refactoring.psi.TypeParametersVisitor;
 import com.sixrr.metrics.utils.MethodUtils;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.HashSet;
+import java.util.Set;
 
 public class NumUsedTypesCalculator extends MethodCalculator {
     private int methodNestingDepth = 0;
-    private int typeCount = 0;
+    private Set<PsiType> typeSet = null;
 
     @Override
     protected PsiElementVisitor createVisitor() {
@@ -20,15 +23,15 @@ public class NumUsedTypesCalculator extends MethodCalculator {
         @Override
         public void visitMethod(PsiMethod method) {
             if (methodNestingDepth == 0) {
-                typeCount = 0;
+                typeSet = new HashSet<PsiType>();
             }
-            typeCount++;
+            typeSet.add(method.getReturnType());
 
             methodNestingDepth++;
             super.visitMethod(method);
             methodNestingDepth--;
             if (methodNestingDepth == 0 && !MethodUtils.isAbstract(method)) {
-                postMetric(method, typeCount);
+                postMetric(method, typeSet.size());
             }
         }
 
@@ -39,11 +42,12 @@ public class NumUsedTypesCalculator extends MethodCalculator {
             Method gettingTypeMethod = null;
             try {
                 gettingTypeMethod = element.getClass().getMethod("getType", (Class<?>[]) null);
-            } catch (NoSuchMethodException | SecurityException ignored) {
-            }
+            } catch (NoSuchMethodException | SecurityException ignored) {}
 
             if (gettingTypeMethod != null)
-                typeCount++;
+                try {
+                    typeSet.add((PsiType) gettingTypeMethod.invoke(element));
+                } catch (IllegalAccessException | InvocationTargetException ignored) {}
         }
     }
 }
