@@ -22,6 +22,11 @@ package com.sixrr.metrics;
 public enum MetricCategory {
 
     /**
+     * The metric is calculated for each candidate for extraction from method.
+     */
+    ExtractionCandidate,
+
+    /**
      * The metric is calculated for each method.
      */
     Method,
