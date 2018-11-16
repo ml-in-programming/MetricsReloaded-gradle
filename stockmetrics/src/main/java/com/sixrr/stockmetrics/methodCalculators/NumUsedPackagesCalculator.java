@@ -34,9 +34,18 @@ public class NumUsedPackagesCalculator extends MethodCalculator {
 
         @Override
         public void visitElement(PsiElement element) {
+
             super.visitElement(element);
 
-            PsiElement declaration = element.getReferences()[0].resolve();
+            PsiReference[] references = element.getReferences();
+            if (references.length == 0)
+                return;
+
+            boolean isInMethod = PsiTreeUtil.getParentOfType(element, PsiMethod.class) != null;
+            if (!isInMethod)
+                return;
+
+            PsiElement declaration = references[0].resolve();
             PsiPackage pack = PsiTreeUtil.getParentOfType(declaration, PsiPackage.class);
 
             while (pack != null) {

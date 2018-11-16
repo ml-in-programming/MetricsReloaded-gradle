@@ -1,6 +1,7 @@
 package com.sixrr.stockmetrics.methodCalculators;
 
 import com.intellij.psi.*;
+import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.refactoring.psi.TypeParametersVisitor;
 import com.sixrr.metrics.utils.MethodUtils;
 
@@ -38,6 +39,10 @@ public class NumUsedTypesCalculator extends MethodCalculator {
         @Override
         public void visitElement(PsiElement element) {
             super.visitElement(element);
+
+            boolean isInMethod = PsiTreeUtil.getParentOfType(element, PsiMethod.class) != null;
+            if (!isInMethod)
+                return;
 
             Method gettingTypeMethod = null;
             try {
