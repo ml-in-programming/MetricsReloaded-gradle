@@ -22,6 +22,7 @@ import com.intellij.psi.*;
 import com.sixrr.metrics.Metric;
 import com.sixrr.metrics.MetricsResultsHolder;
 import com.sixrr.stockmetrics.methodCalculators.MethodCalculator;
+import org.jetbrains.research.groups.ml_methods.utils.ExtractionCandidate;
 
 public abstract class SummarizeMethodMetricsCalculator extends ClassCalculator {
     private final Metric methodMetric;
@@ -94,6 +95,11 @@ public abstract class SummarizeMethodMetricsCalculator extends ClassCalculator {
             }
 
             @Override
+            public void postCandidateMetric(Metric metric, ExtractionCandidate candidate, double value) {
+                throw new UnsupportedOperationException("Method should be called in this realization!");
+            }
+
+            @Override
             public void postProjectMetric(Metric metric, double numerator, double denominator) {
                 throw new UnsupportedOperationException("Method should be called in this realization!");
             }
@@ -125,6 +131,11 @@ public abstract class SummarizeMethodMetricsCalculator extends ClassCalculator {
 
             @Override
             public void postMethodMetric(Metric metric, PsiMethod method, double numerator, double denominator) {
+                throw new UnsupportedOperationException("Method should be called in this realization!");
+            }
+
+            @Override
+            public void postCandidateMetric(Metric metric, ExtractionCandidate candidate, double numerator, double denominator) {
                 throw new UnsupportedOperationException("Method should be called in this realization!");
             }
         }

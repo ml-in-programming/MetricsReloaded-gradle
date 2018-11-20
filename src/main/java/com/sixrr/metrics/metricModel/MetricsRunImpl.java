@@ -25,8 +25,10 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiClass;
+import com.intellij.psi.PsiCodeBlock;
 import com.intellij.psi.PsiMethod;
 import com.intellij.psi.PsiPackage;
+import com.intellij.psi.impl.source.tree.java.PsiCodeBlockImpl;
 import com.sixrr.metrics.Metric;
 import com.sixrr.metrics.MetricCategory;
 import com.sixrr.metrics.profile.MetricRepository;
@@ -37,6 +39,7 @@ import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.input.SAXBuilder;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.research.groups.ml_methods.utils.ExtractionCandidate;
 
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
@@ -127,6 +130,14 @@ public class MetricsRunImpl implements MetricsRun {
     }
 
     @Override
+    public void postCandidateMetric(@NotNull Metric metric, @NotNull ExtractionCandidate candidate, double value) {
+        final MetricsResult results = getResultsForCategory(MetricCategory.ExtractionCandidate);
+        final String measuredCandidate = candidate.toString();
+        results.postValue(metric, measuredCandidate, value);
+        results.setElementForMeasuredObject(measuredCandidate, candidate.getCodeBlock());
+    }
+
+    @Override
     public void postProjectMetric(@NotNull Metric metric, double numerator, double denominator) {
         final MetricsResult results = getResultsForCategory(MetricCategory.Project);
         results.postValue(metric, "project", numerator, denominator);
@@ -173,6 +184,15 @@ public class MetricsRunImpl implements MetricsRun {
         final String signature = MethodUtils.calculateSignature(method);
         results.postValue(metric, signature, numerator, denominator);
         results.setElementForMeasuredObject(signature, method);
+    }
+
+    @Override
+    public void postCandidateMetric(@NotNull Metric metric, @NotNull ExtractionCandidate candidate,
+                                    double numerator, double denominator) {
+        final MetricsResult results = getResultsForCategory(MetricCategory.ExtractionCandidate);
+        final String measuredCandidate = candidate.toString();
+        results.postValue(metric, measuredCandidate, numerator, denominator);
+        results.setElementForMeasuredObject(measuredCandidate, candidate.getCodeBlock());
     }
 
     private void postRawMetric(@NotNull Metric metric, @NotNull String measured, double value) {

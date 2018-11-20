@@ -22,6 +22,8 @@ import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiMethod;
 import com.intellij.psi.PsiPackage;
 
+import org.jetbrains.research.groups.ml_methods.utils.ExtractionCandidate;
+
 /**
  * The MetricsResultHolder is the mechanism by which metrics values get reported for later display and processing.  There
  * are a pair of metric posting methods for each metric category, one for simple values and one for ratio values.
@@ -91,6 +93,15 @@ public interface MetricsResultsHolder {
     void postMethodMetric(Metric metric, PsiMethod method, double value);
 
     /**
+     * Post a simple value for a extraction candidates metric.
+     *
+     * @param metric the metric to post the value for.   It should have a category of {@link MetricCategory#ExtractionCandidate}
+     * @param candidate the extraction candidate of class {@link ExtractionCandidate} for which the metric is calculated
+     * @param value the value to post.
+     */
+    void postCandidateMetric(Metric metric, ExtractionCandidate candidate, double value);
+
+    /**
      * Post a ratio value for a project metric.
      *
      * @param metric      the metric to post the value for.   It should have a category of {@link MetricCategory#Project}.
@@ -157,4 +168,14 @@ public interface MetricsResultsHolder {
      * @param denominator The denominator of the value to post.  Should be a positive integer.
      */
     void postMethodMetric(Metric metric, PsiMethod method, double numerator, double denominator);
+
+    /**
+     * Post a simple value for a extraction candidates metric.
+     *
+     * @param metric the metric to post the value for.   It should have a category of {@link MetricCategory#ExtractionCandidate}
+     * @param candidate the extraction candidate of class {@link ExtractionCandidate} for which the metric is calculated
+     * @param numerator   The numerator of the value to post.  Should be an integer.
+     * @param denominator The denominator of the value to post.  Should be a positive integer.
+     */
+    void postCandidateMetric(Metric metric, ExtractionCandidate candidate, double numerator, double denominator);
 }
