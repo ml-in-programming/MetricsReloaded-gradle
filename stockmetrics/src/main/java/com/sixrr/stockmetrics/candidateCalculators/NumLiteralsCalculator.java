@@ -24,12 +24,7 @@ public class NumLiteralsCalculator extends CandidateCalculator {
 
             if (!isInsideMethod)
                 return;
-
-            for (int i = 0; i < methodCandidates.size(); i++) {
-                if (methodCandidates.get(i).isInCandidate()) {
-                    counts.set(i, counts.get(i) + 1);
-                }
-            }
+            incrementCounters();
         }
     }
 }

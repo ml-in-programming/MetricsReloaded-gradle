@@ -9,11 +9,11 @@ import org.jetbrains.research.groups.ml_methods.utils.ExtractionCandidate;
 
 import java.util.ArrayList;
 
-public class NumLiteralsMetric extends CandidateMetric {
+public class NumLiteralsCandidateMetric extends CandidateMetric {
 
     private ArrayList<ExtractionCandidate> candidates;
 
-    public NumLiteralsMetric(ArrayList<ExtractionCandidate> candidates) {
+    public NumLiteralsCandidateMetric(ArrayList<ExtractionCandidate> candidates) {
         this.candidates = candidates;
     }
 

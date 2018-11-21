@@ -15,7 +15,7 @@ abstract class CandidateCalculator extends BaseMetricsCalculator {
     private ArrayList<ExtractionCandidate> candidates;
 
     public CandidateCalculator(ArrayList<ExtractionCandidate> candidates) {
-        this.candidates = candidates;
+        this.candidates = new ArrayList<>(candidates);
     }
 
     void postMetric(ExtractionCandidate candidate, int numerator, int denominator) {
@@ -62,6 +62,14 @@ abstract class CandidateCalculator extends BaseMetricsCalculator {
         public void visitStatement(PsiStatement statement) {
             super.visitStatement(statement);
             setInsideCandidate(statement, methodCandidates);
+        }
+
+        void incrementCounters() {
+            for (int i = 0; i < methodCandidates.size(); i++) {
+                if (methodCandidates.get(i).isInCandidate()) {
+                    counts.set(i, counts.get(i) + 1);
+                }
+            }
         }
     }
 
