@@ -3,10 +3,10 @@ package com.sixrr.stockmetrics.methodMetrics;
 import com.sixrr.metrics.MetricCalculator;
 import com.sixrr.metrics.MetricType;
 import com.sixrr.stockmetrics.i18n.StockMetricsBundle;
-import com.sixrr.stockmetrics.methodCalculators.NumIfCalculator;
+import com.sixrr.stockmetrics.methodCalculators.NumTernaryCalculator;
 import org.jetbrains.annotations.NotNull;
 
-public class NumIfMetric  extends MethodMetric {
+public class NumTernaryOperatorsMetric extends MethodMetric {
 
     @NotNull
     @Override
@@ -29,6 +29,6 @@ public class NumIfMetric  extends MethodMetric {
     @NotNull
     @Override
     public MetricCalculator createCalculator() {
-        return new NumIfCalculator();
+        return new NumTernaryCalculator();
     }
 }

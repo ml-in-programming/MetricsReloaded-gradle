@@ -1,18 +1,15 @@
 package com.sixrr.stockmetrics.methodCalculators;
 
-import com.intellij.psi.JavaRecursiveElementVisitor;
-import com.intellij.psi.PsiElementVisitor;
-import com.intellij.psi.PsiIfStatement;
-import com.intellij.psi.PsiMethod;
+import com.intellij.psi.*;
 import com.sixrr.metrics.utils.MethodUtils;
 
-public class NumIfCalculator extends MethodCalculator {
+public class NumTernaryCalculator extends MethodCalculator {
     private int methodNestingDepth = 0;
     private int elementCount = 0;
 
     @Override
     protected PsiElementVisitor createVisitor() {
-        return new NumIfCalculator.Visitor();
+        return new NumTernaryCalculator.Visitor();
     }
 
     private class Visitor extends JavaRecursiveElementVisitor {
@@ -31,8 +28,8 @@ public class NumIfCalculator extends MethodCalculator {
         }
 
         @Override
-        public void visitIfStatement(PsiIfStatement statement) {
-            super.visitIfStatement(statement);
+        public void visitConditionalExpression(PsiConditionalExpression expression) {
+            super.visitConditionalExpression(expression);
             elementCount++;
         }
     }
