@@ -17,8 +17,6 @@ public class NumLiteralsMetric extends CandidateMetric {
         this.candidates = candidates;
     }
 
-
-    // need I change 2 different metrics
     @NotNull
     @Override
     public String getDisplayName() {

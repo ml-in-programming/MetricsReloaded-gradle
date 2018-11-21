@@ -54,7 +54,9 @@ public final class ExtractionCandidate {
     @Override
     public String toString() {
 
-        StringBuilder str = new StringBuilder("Candidate:\n");
+        StringBuilder str = new StringBuilder("Candidate of ");
+        str.append(sourceMethod).append(":\n");
+
         for (PsiStatement statement: statements) {
             str.append(statement.getText()).append("\n");
         }
