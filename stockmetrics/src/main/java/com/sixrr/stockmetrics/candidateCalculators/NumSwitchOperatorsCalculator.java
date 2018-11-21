@@ -2,26 +2,27 @@ package com.sixrr.stockmetrics.candidateCalculators;
 
 import com.intellij.psi.PsiConditionalExpression;
 import com.intellij.psi.PsiElementVisitor;
+import com.intellij.psi.PsiSwitchStatement;
 import org.jetbrains.research.groups.ml_methods.utils.ExtractionCandidate;
 
 import java.util.ArrayList;
 
-public class NumTernaryOperatorsCalculator extends CandidateCalculator {
+public class NumSwitchOperatorsCalculator extends CandidateCalculator {
 
-    public NumTernaryOperatorsCalculator(ArrayList<ExtractionCandidate> candidates) {
+    public NumSwitchOperatorsCalculator(ArrayList<ExtractionCandidate> candidates) {
         super(candidates);
     }
 
     @Override
     protected PsiElementVisitor createVisitor() {
-        return new NumTernaryOperatorsCalculator.Visitor();
+        return new NumSwitchOperatorsCalculator.Visitor();
     }
 
     private class Visitor extends CandidateVisitor {
 
         @Override
-        public void visitConditionalExpression(PsiConditionalExpression expression) {
-            super.visitConditionalExpression(expression);
+        public void visitSwitchStatement(PsiSwitchStatement statement) {
+            super.visitSwitchStatement(statement);
 
             if (!isInsideMethod)
                 return;
