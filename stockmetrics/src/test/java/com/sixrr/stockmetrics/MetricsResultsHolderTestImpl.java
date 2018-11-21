@@ -8,6 +8,7 @@ import com.intellij.psi.PsiMethod;
 import com.intellij.psi.PsiPackage;
 import com.sixrr.metrics.Metric;
 import com.sixrr.metrics.MetricsResultsHolder;
+import org.jetbrains.research.groups.ml_methods.utils.ExtractionCandidate;
 
 import java.util.HashMap;
 import java.util.List;
@@ -70,6 +71,11 @@ public class MetricsResultsHolderTestImpl implements MetricsResultsHolder {
     }
 
     @Override
+    public void postCandidateMetric(Metric metric, ExtractionCandidate candidate, double value) {
+
+    }
+
+    @Override
     public void postProjectMetric(Metric metric, double numerator, double denominator) {
 
     }
@@ -103,6 +109,11 @@ public class MetricsResultsHolderTestImpl implements MetricsResultsHolder {
     public void postMethodMetric(Metric metric, PsiMethod method, double numerator, double denominator) {
         methodMetricsFractions.computeIfAbsent(metric, ignored -> new HashMap<>()).
                 put(method, new Pair<>(numerator, denominator));
+    }
+
+    @Override
+    public void postCandidateMetric(Metric metric, ExtractionCandidate candidate, double numerator, double denominator) {
+
     }
 
     private double getMethodMetric(Metric metric, PsiMethod method) {

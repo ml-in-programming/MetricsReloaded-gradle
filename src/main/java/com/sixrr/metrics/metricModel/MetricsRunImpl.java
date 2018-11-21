@@ -134,7 +134,7 @@ public class MetricsRunImpl implements MetricsRun {
         final MetricsResult results = getResultsForCategory(MetricCategory.ExtractionCandidate);
         final String measuredCandidate = candidate.toString();
         results.postValue(metric, measuredCandidate, value);
-        results.setElementForMeasuredObject(measuredCandidate, candidate.getCodeBlock());
+        results.setElementForMeasuredObject(measuredCandidate, candidate.getStart());
     }
 
     @Override
@@ -192,7 +192,7 @@ public class MetricsRunImpl implements MetricsRun {
         final MetricsResult results = getResultsForCategory(MetricCategory.ExtractionCandidate);
         final String measuredCandidate = candidate.toString();
         results.postValue(metric, measuredCandidate, numerator, denominator);
-        results.setElementForMeasuredObject(measuredCandidate, candidate.getCodeBlock());
+        results.setElementForMeasuredObject(measuredCandidate, candidate.getStart());
     }
 
     private void postRawMetric(@NotNull Metric metric, @NotNull String measured, double value) {
