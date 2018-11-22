@@ -23,34 +23,19 @@ import com.intellij.psi.javadoc.PsiDocComment;
 import com.sixrr.stockmetrics.utils.LineUtil;
 import com.sixrr.metrics.utils.MethodUtils;
 
-public class JavadocLinesOfCodeMethodCalculator extends MethodCalculator {
-    private int methodNestingDepth = 0;
-    protected int elementCount = 0;
+public class JavadocLinesOfCodeMethodCalculator extends NumSimpleElementCalculator {
 
     @Override
     protected PsiElementVisitor createVisitor() {
         return new Visitor();
     }
 
-    private class Visitor extends JavaRecursiveElementVisitor {
-
-        @Override
-        public void visitMethod(PsiMethod method) {
-            if (methodNestingDepth == 0) {
-                elementCount = 0;
-            }
-            methodNestingDepth++;
-            super.visitMethod(method);
-            methodNestingDepth--;
-            if (methodNestingDepth == 0 && !MethodUtils.isAbstract(method)) {
-                postMetric(method, elementCount);
-            }
-        }
+    private class Visitor extends NumSimpleElementCalculator.Visitor {
 
         @Override
         public void visitDocComment(PsiDocComment comment) {
             super.visitDocComment(comment);
-            elementCount += LineUtil.countLines(comment);
+            elementsCounter += LineUtil.countLines(comment);
         }
     }
 }

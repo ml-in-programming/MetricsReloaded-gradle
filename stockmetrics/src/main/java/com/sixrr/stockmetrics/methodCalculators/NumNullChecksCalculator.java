@@ -23,29 +23,14 @@ import com.sixrr.metrics.utils.MethodUtils;
 /**
  * @author Bas Leijdekkers
  */
-public class NumNullChecksCalculator extends MethodCalculator {
-    private int methodNestingDepth = 0;
-    private int elementCount = 0;
+public class NumNullChecksCalculator extends NumSimpleElementCalculator {
 
     @Override
     protected PsiElementVisitor createVisitor() {
         return new Visitor();
     }
 
-    private class Visitor extends JavaRecursiveElementVisitor {
-
-        @Override
-        public void visitMethod(PsiMethod method) {
-            if (methodNestingDepth == 0) {
-                elementCount = 0;
-            }
-            methodNestingDepth++;
-            super.visitMethod(method);
-            methodNestingDepth--;
-            if (methodNestingDepth == 0 && !MethodUtils.isAbstract(method)) {
-                postMetric(method, elementCount);
-            }
-        }
+    private class Visitor extends NumSimpleElementCalculator.Visitor {
 
         @Override
         public void visitPolyadicExpression(PsiPolyadicExpression expression) {
@@ -56,7 +41,7 @@ public class NumNullChecksCalculator extends MethodCalculator {
             }
             for (PsiExpression operand : expression.getOperands()) {
                 if (operand instanceof PsiLiteralExpression && PsiType.NULL.equals(operand.getType())) {
-                    elementCount++;
+                    elementsCounter++;
                 }
             }
         }

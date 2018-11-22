@@ -6,36 +6,19 @@ import com.intellij.psi.PsiLocalVariable;
 import com.intellij.psi.PsiMethod;
 import com.sixrr.metrics.utils.MethodUtils;
 
-public class NumLocalVarsAccessCalculator extends MethodCalculator {
-    private int methodNestingDepth = 0;
-    private int elementCount = 0;
+public class NumLocalVarsAccessCalculator extends NumSimpleElementCalculator {
 
     @Override
     protected PsiElementVisitor createVisitor() {
         return new NumLocalVarsAccessCalculator.Visitor();
     }
 
-    private class Visitor extends JavaRecursiveElementVisitor {
-
-        @Override
-        public void visitMethod(PsiMethod method) {
-            if (methodNestingDepth == 0) {
-                elementCount = 0;
-            }
-
-            methodNestingDepth++;
-            super.visitMethod(method);
-            methodNestingDepth--;
-
-            if (methodNestingDepth == 0 && !MethodUtils.isAbstract(method)) {
-                postMetric(method, elementCount);
-            }
-        }
+    private class Visitor extends NumSimpleElementCalculator.Visitor {
 
         @Override
         public void visitLocalVariable(PsiLocalVariable variable) {
             super.visitLocalVariable(variable);
-            elementCount++;
+            elementsCounter++;
         }
     }
 }

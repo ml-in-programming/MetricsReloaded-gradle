@@ -19,64 +19,49 @@ package com.sixrr.stockmetrics.methodCalculators;
 import com.intellij.psi.*;
 import com.sixrr.metrics.utils.MethodUtils;
 
-public class NumExecutableStatementsCalculator extends MethodCalculator {
-    private int methodNestingDepth = 0;
-    private int elementCount = 0;
+public class NumExecutableStatementsCalculator extends NumSimpleElementCalculator {
 
     @Override
     protected PsiElementVisitor createVisitor() {
         return new Visitor();
     }
 
-    private class Visitor extends JavaRecursiveElementVisitor {
-
-        @Override
-        public void visitMethod(PsiMethod method) {
-            if (methodNestingDepth == 0) {
-                elementCount = 0;
-            }
-            methodNestingDepth++;
-            super.visitMethod(method);
-            methodNestingDepth--;
-            if (methodNestingDepth == 0 && !MethodUtils.isAbstract(method)) {
-                postMetric(method, elementCount);
-            }
-        }
+    private class Visitor extends NumSimpleElementCalculator.Visitor {
 
         @Override
         public void visitExpressionListStatement(PsiExpressionListStatement statement) {
             super.visitExpressionListStatement(statement);
-            elementCount++;
+            elementsCounter++;
         }
 
         @Override
         public void visitExpressionStatement(PsiExpressionStatement statement) {
             super.visitExpressionStatement(statement);
-            elementCount++;
+            elementsCounter++;
         }
 
         @Override
         public void visitDeclarationStatement(PsiDeclarationStatement statement) {
             super.visitDeclarationStatement(statement);
-            elementCount++;
+            elementsCounter++;
         }
 
         @Override
         public void visitAssertStatement(PsiAssertStatement statement) {
             super.visitAssertStatement(statement);
-            elementCount++;
+            elementsCounter++;
         }
 
         @Override
         public void visitReturnStatement(PsiReturnStatement statement) {
             super.visitReturnStatement(statement);
-            elementCount++;
+            elementsCounter++;
         }
 
         @Override
         public void visitThrowStatement(PsiThrowStatement statement) {
             super.visitThrowStatement(statement);
-            elementCount++;
+            elementsCounter++;
         }
     }
 }

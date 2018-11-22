@@ -19,94 +19,79 @@ package com.sixrr.stockmetrics.methodCalculators;
 import com.intellij.psi.*;
 import com.sixrr.metrics.utils.MethodUtils;
 
-public class NumControlStatementsCalculator extends MethodCalculator {
-    private int methodNestingDepth = 0;
-    private int elementCount = 0;
+public class NumControlStatementsCalculator extends NumSimpleElementCalculator {
 
     @Override
     protected PsiElementVisitor createVisitor() {
         return new Visitor();
     }
 
-    private class Visitor extends JavaRecursiveElementVisitor {
-
-        @Override
-        public void visitMethod(PsiMethod method) {
-            if (methodNestingDepth == 0) {
-                elementCount = 0;
-            }
-            methodNestingDepth++;
-            super.visitMethod(method);
-            methodNestingDepth--;
-            if (methodNestingDepth == 0 && !MethodUtils.isAbstract(method)) {
-                postMetric(method, elementCount);
-            }
-        }
+    private class Visitor extends NumSimpleElementCalculator.Visitor {
 
         @Override
         public void visitIfStatement(PsiIfStatement statement) {
             super.visitIfStatement(statement);
-            elementCount++;
+            elementsCounter++;
         }
 
         @Override
         public void visitDoWhileStatement(PsiDoWhileStatement statement) {
             super.visitDoWhileStatement(statement);
-            elementCount++;
+            elementsCounter++;
         }
 
         @Override
         public void visitContinueStatement(PsiContinueStatement statement) {
             super.visitContinueStatement(statement);
-            elementCount++;
+            elementsCounter++;
         }
 
         @Override
         public void visitBreakStatement(PsiBreakStatement statement) {
             super.visitBreakStatement(statement);
-            elementCount++;
+            elementsCounter++;
         }
 
         @Override
         public void visitForStatement(PsiForStatement statement) {
             super.visitForStatement(statement);
-            elementCount++;
+            elementsCounter++;
         }
 
         @Override
         public void visitForeachStatement(PsiForeachStatement statement) {
             super.visitForeachStatement(statement);
-            elementCount++;
+            elementsCounter++;
         }
 
         @Override
         public void visitSwitchLabelStatement(PsiSwitchLabelStatement statement) {
             super.visitSwitchLabelStatement(statement);
-            elementCount++;
+            elementsCounter++;
         }
 
         @Override
         public void visitSwitchStatement(PsiSwitchStatement statement) {
             super.visitSwitchStatement(statement);
-            elementCount++;
+            elementsCounter++;
         }
 
         @Override
         public void visitSynchronizedStatement(PsiSynchronizedStatement statement) {
             super.visitSynchronizedStatement(statement);
-            elementCount++;
+            elementsCounter++;
         }
 
         @Override
         public void visitTryStatement(PsiTryStatement statement) {
             super.visitTryStatement(statement);
-            elementCount++;
+            elementsCounter++;
         }
 
         @Override
         public void visitWhileStatement(PsiWhileStatement statement) {
             super.visitWhileStatement(statement);
-            elementCount++;
+            elementsCounter++;
         }
     }
 }

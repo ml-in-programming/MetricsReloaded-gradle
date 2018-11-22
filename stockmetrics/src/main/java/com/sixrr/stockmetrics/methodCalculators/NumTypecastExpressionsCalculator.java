@@ -19,40 +19,25 @@ package com.sixrr.stockmetrics.methodCalculators;
 import com.intellij.psi.*;
 import com.sixrr.metrics.utils.MethodUtils;
 
-public class NumTypecastExpressionsCalculator extends MethodCalculator {
-    private int methodNestingDepth = 0;
-    private int elementCount = 0;
+public class NumTypecastExpressionsCalculator extends NumSimpleElementCalculator {
 
     @Override
     protected PsiElementVisitor createVisitor() {
         return new Visitor();
     }
 
-    private class Visitor extends JavaRecursiveElementVisitor {
-
-        @Override
-        public void visitMethod(PsiMethod method) {
-            if (methodNestingDepth == 0) {
-                elementCount = 0;
-            }
-            methodNestingDepth++;
-            super.visitMethod(method);
-            methodNestingDepth--;
-            if (methodNestingDepth == 0 && !MethodUtils.isAbstract(method)) {
-                postMetric(method, elementCount);
-            }
-        }
+    private class Visitor extends NumSimpleElementCalculator.Visitor {
 
         @Override
         public void visitTypeCastExpression(PsiTypeCastExpression exp) {
             super.visitTypeCastExpression(exp);
-            elementCount++;
+            elementsCounter++;
         }
 
         @Override
         public void visitInstanceOfExpression(PsiInstanceOfExpression exp) {
             super.visitInstanceOfExpression(exp);
-            elementCount++;
+            elementsCounter++;
         }
     }
 }

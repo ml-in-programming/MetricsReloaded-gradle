@@ -18,37 +18,22 @@ package com.sixrr.stockmetrics.methodCalculators;
 
 import com.intellij.psi.*;
 
-public class ConditionCountCalculator extends MethodCalculator {
-    private int count = 0;
-    private int depth = 0;
+public class ConditionCountCalculator extends NumSimpleElementCalculator {
 
     @Override
     protected PsiElementVisitor createVisitor() {
         return new Visitor();
     }
 
-    private class Visitor extends JavaRecursiveElementVisitor {
+    private class Visitor extends NumSimpleElementCalculator.Visitor {
 
         @Override
         public void visitExpression(PsiExpression expression) {
-            final int oldCount = count;
+            final int oldCount = elementsCounter;
             super.visitExpression(expression);
             if (expression.getType() != null &&
-                    PsiType.BOOLEAN.isAssignableFrom(expression.getType()) && oldCount == count) {
-                count++;
-            }
-        }
-
-        @Override
-        public void visitMethod(PsiMethod method) {
-            if (depth == 0) {
-                count = 0;
-            }
-            depth++;
-            super.visitMethod(method);
-            depth--;
-            if (depth == 0) {
-                postMetric(method, count);
+                    PsiType.BOOLEAN.isAssignableFrom(expression.getType()) && oldCount == elementsCounter) {
+                elementsCounter++;
             }
         }
     }
