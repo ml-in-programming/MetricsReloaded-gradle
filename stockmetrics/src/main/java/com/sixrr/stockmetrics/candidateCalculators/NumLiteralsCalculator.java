@@ -5,7 +5,7 @@ import org.jetbrains.research.groups.ml_methods.utils.ExtractionCandidate;
 
 import java.util.ArrayList;
 
-public class NumLiteralsCalculator extends CandidateCalculator {
+public class NumLiteralsCalculator extends AbstractNumCandidateCalculator {
 
     public NumLiteralsCalculator(ArrayList<ExtractionCandidate> candidates) {
         super(candidates);

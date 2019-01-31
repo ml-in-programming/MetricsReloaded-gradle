@@ -6,15 +6,15 @@ import org.jetbrains.research.groups.ml_methods.utils.ExtractionCandidate;
 
 import java.util.ArrayList;
 
-public class NumSwitchOperatorsCalculator extends AbstractNumCandidateCalculator {
+public class NumTypeAccessesCalculator extends AbstractNumCandidateCalculator {
 
-    public NumSwitchOperatorsCalculator(ArrayList<ExtractionCandidate> candidates) {
+    public NumTypeAccessesCalculator(ArrayList<ExtractionCandidate> candidates) {
         super(candidates);
     }
 
     @Override
     protected PsiElementVisitor createVisitor() {
-        return new NumSwitchOperatorsCalculator.Visitor();
+        return new NumTypeAccessesCalculator.Visitor();
     }
 
     private class Visitor extends CandidateVisitor {

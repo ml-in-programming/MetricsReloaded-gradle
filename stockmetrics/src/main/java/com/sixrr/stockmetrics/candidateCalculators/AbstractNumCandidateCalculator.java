@@ -5,16 +5,17 @@ import com.intellij.psi.PsiMethod;
 import com.intellij.psi.PsiStatement;
 import com.sixrr.metrics.utils.MethodUtils;
 import com.sixrr.stockmetrics.execution.BaseMetricsCalculator;
+import com.sixrr.stockmetrics.utils.CandidateUtils;
 import org.jetbrains.research.groups.ml_methods.utils.ExtractionCandidate;
 
 import java.util.ArrayList;
 import java.util.stream.Collectors;
 
-abstract class CandidateCalculator extends BaseMetricsCalculator {
+abstract class AbstractNumCandidateCalculator extends BaseMetricsCalculator {
 
     private ArrayList<ExtractionCandidate> candidates;
 
-    public CandidateCalculator(ArrayList<ExtractionCandidate> candidates) {
+    public AbstractNumCandidateCalculator(ArrayList<ExtractionCandidate> candidates) {
         this.candidates = new ArrayList<>(candidates);
     }
 
@@ -39,7 +40,7 @@ abstract class CandidateCalculator extends BaseMetricsCalculator {
         @Override
         public void visitMethod(PsiMethod method) {
             if (methodNestingDepth == 0) {
-                methodCandidates = getCandidatesOfMethod(method, candidates);
+                methodCandidates = CandidateUtils.getCandidatesOfMethod(method, candidates);
                 counts.clear();
                 methodCandidates.forEach(elem -> counts.add(0));
                 isInsideMethod = true;
@@ -61,7 +62,7 @@ abstract class CandidateCalculator extends BaseMetricsCalculator {
         @Override
         public void visitStatement(PsiStatement statement) {
             super.visitStatement(statement);
-            setInsideCandidate(statement, methodCandidates);
+            CandidateUtils.setInsideCandidate(statement, methodCandidates);
         }
 
         void incrementCounters() {
@@ -70,27 +71,6 @@ abstract class CandidateCalculator extends BaseMetricsCalculator {
                     counts.set(i, counts.get(i) + 1);
                 }
             }
-        }
-    }
-
-    private static ArrayList<ExtractionCandidate> getCandidatesOfMethod(
-            PsiMethod method,
-            ArrayList<ExtractionCandidate> allCandidates)
-    {
-        return allCandidates.stream()
-                .filter(elem -> elem.getSourceMethod().equals(method))
-                .collect(Collectors.toCollection(ArrayList::new));
-
-    }
-
-    private static void setInsideCandidate(PsiStatement currentStatement, ArrayList<ExtractionCandidate> candidates) {
-        for (ExtractionCandidate candidate: candidates) {
-
-            if (candidate.getStart().equals(currentStatement))
-                candidate.setInCandidate(true);
-
-            if (candidate.getEnd().equals(currentStatement))
-                candidate.setInCandidate(false);
         }
     }
 }
