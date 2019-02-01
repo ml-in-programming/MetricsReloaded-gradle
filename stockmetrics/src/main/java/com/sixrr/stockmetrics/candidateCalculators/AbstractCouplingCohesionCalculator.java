@@ -2,6 +2,7 @@ package com.sixrr.stockmetrics.candidateCalculators;
 
 import com.intellij.psi.JavaRecursiveElementVisitor;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.PsiMethod;
 import com.sixrr.stockmetrics.execution.BaseMetricsCalculator;
 import com.sixrr.stockmetrics.utils.BlocksUtils;
@@ -11,7 +12,7 @@ import org.jetbrains.research.groups.ml_methods.utils.ExtractionCandidate;
 
 import java.util.*;
 
-public abstract class AbstractCouplingCohesionCalculator<T extends PsiElement> extends BaseMetricsCalculator {
+public class AbstractCouplingCohesionCalculator<T extends PsiElement> extends BaseMetricsCalculator {
 
     private ArrayList<ExtractionCandidate> candidates;
     private Class<T> aClass;
@@ -30,6 +31,11 @@ public abstract class AbstractCouplingCohesionCalculator<T extends PsiElement> e
         this.aClass = aClass;
         this.isCouplingMethod = isCouplingMethod;
         this.isFirstPlace = isFirstPlace;
+    }
+
+    @Override
+    protected PsiElementVisitor createVisitor() {
+        return new CandidateVisitor();
     }
 
     void postMetric(ExtractionCandidate candidate, int numerator, int denominator) {
