@@ -6,14 +6,10 @@ import com.intellij.psi.PsiMethod;
 import com.sixrr.stockmetrics.execution.BaseMetricsCalculator;
 import com.sixrr.stockmetrics.utils.BlocksUtils;
 import com.sixrr.stockmetrics.utils.CandidateUtils;
-import org.graalvm.util.Pair;
 import org.jetbrains.research.groups.ml_methods.utils.BlockOfMethod;
 import org.jetbrains.research.groups.ml_methods.utils.ExtractionCandidate;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedHashSet;
-import java.util.Set;
+import java.util.*;
 
 public abstract class AbstractCouplingCohesionCalculator<T extends PsiElement> extends BaseMetricsCalculator {
 
@@ -21,13 +17,31 @@ public abstract class AbstractCouplingCohesionCalculator<T extends PsiElement> e
     private Class<T> aClass;
     private double coupling;
     private double cohesion;
+    private boolean isCouplingMethod;
+    private boolean isFirstPlace;
 
     public AbstractCouplingCohesionCalculator(
             ArrayList<ExtractionCandidate> candidates,
-            Class<T> aClass) {
+            Class<T> aClass,
+            boolean isCouplingMethod,
+            boolean isFirstPlace) {
 
         this.candidates = new ArrayList<>(candidates);
         this.aClass = aClass;
+        this.isCouplingMethod = isCouplingMethod;
+        this.isFirstPlace = isFirstPlace;
+    }
+
+    void postMetric(ExtractionCandidate candidate, int numerator, int denominator) {
+        resultsHolder.postCandidateMetric(metric, candidate, (double) numerator, (double) denominator);
+    }
+
+    void postMetric(ExtractionCandidate candidate, int value) {
+        resultsHolder.postCandidateMetric(metric, candidate, (double) value);
+    }
+
+    void postMetric(ExtractionCandidate candidate, double value) {
+        resultsHolder.postCandidateMetric(metric, candidate, value);
     }
 
     public class CandidateVisitor extends JavaRecursiveElementVisitor {
@@ -39,11 +53,12 @@ public abstract class AbstractCouplingCohesionCalculator<T extends PsiElement> e
             methodCandidates = CandidateUtils.getCandidatesOfMethod(method, candidates);
             for (ExtractionCandidate candidate: methodCandidates) {
                 abstractMethod(candidate);
+                postMetric(candidate, getResult());
             }
         }
     }
 
-    protected void abstractMethod(ExtractionCandidate candidate) {
+    private void abstractMethod(ExtractionCandidate candidate) {
         PsiMethod sourceMethod = candidate.getSourceMethod();
         BlockOfMethod sourceBlock = getBlockFromMethod(sourceMethod);
         BlockOfMethod candidateBlock = candidate.getBlock();
@@ -63,19 +78,44 @@ public abstract class AbstractCouplingCohesionCalculator<T extends PsiElement> e
         int loc = candidateBlock.getStatementsCount();
         int count = BlocksUtils.getCountOfElementFromBlock(candidateBlock, bestElem);
         cohesion = (double)count / loc;
+
     }
 
-    protected static BlockOfMethod getBlockFromMethod(PsiMethod method) {
+    private static BlockOfMethod getBlockFromMethod(PsiMethod method) {
         return new BlockOfMethod(method.getBody().getStatements());
     }
 
-    protected abstract T getElementFromRatio(HashMap<T, Double> ratio);
+    private T getElementFromRatio(HashMap<T, Double> ratio) {
+        T elem = getMaxRatio(ratio);
+        if (isFirstPlace)
+            return elem;
 
-    protected double getCoupling() {
+        ratio.remove(elem);
+        return getMaxRatio(ratio);
+    }
+
+    private T getMaxRatio(HashMap<T, Double> ratio) {
+        T maxElem = null;
+        Double maxDouble = -1.0;
+
+        for (Map.Entry<T, Double> entry: ratio.entrySet()) {
+            if (entry.getValue() > maxDouble) {
+                maxElem = entry.getKey();
+                maxDouble = entry.getValue();
+            }
+        }
+        return maxElem;
+    }
+
+    private double getResult() {
+        return isCouplingMethod ? getCoupling() : getCohesion();
+    }
+
+    private double getCoupling() {
         return coupling;
     }
 
-    protected double getCohesion() {
+    private double getCohesion() {
         return cohesion;
     }
 }
