@@ -32,6 +32,10 @@ public final class ExtractionCandidate {
         return sourceMethod;
     }
 
+    public BlockOfMethod getBlock() {
+        return block;
+    }
+
     @Override
     public String toString() {
 

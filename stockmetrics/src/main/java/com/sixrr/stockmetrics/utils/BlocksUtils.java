@@ -34,10 +34,6 @@ public class BlocksUtils {
     public static <T extends PsiElement> int getCountOfElementFromBlock(BlockOfMethod block, T element) {
         ourCount = 0;
 
-//        PsiReference[] allReferences = element.getReferences();//ReferencesSearch.search(element).findAll();
-//
-//        ReferencesSearch.search(element);
-
         for (int i = 0; i < block.getStatementsCount(); i++) {
             block.get(i).accept(new JavaRecursiveElementVisitor() {
                 @Override
