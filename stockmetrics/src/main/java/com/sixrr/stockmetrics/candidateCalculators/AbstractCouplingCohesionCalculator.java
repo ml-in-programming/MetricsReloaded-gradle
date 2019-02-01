@@ -60,7 +60,7 @@ public abstract class AbstractCouplingCohesionCalculator<T extends PsiElement> e
 
     private void abstractMethod(ExtractionCandidate candidate) {
         PsiMethod sourceMethod = candidate.getSourceMethod();
-        BlockOfMethod sourceBlock = getBlockFromMethod(sourceMethod);
+        BlockOfMethod sourceBlock = BlocksUtils.getBlockFromMethod(sourceMethod);
         BlockOfMethod candidateBlock = candidate.getBlock();
         Set<T> elements = BlocksUtils.getElementsOfBlock(candidateBlock, aClass);
 
@@ -79,10 +79,6 @@ public abstract class AbstractCouplingCohesionCalculator<T extends PsiElement> e
         int count = BlocksUtils.getCountOfElementFromBlock(candidateBlock, bestElem);
         cohesion = (double)count / loc;
 
-    }
-
-    private static BlockOfMethod getBlockFromMethod(PsiMethod method) {
-        return new BlockOfMethod(method.getBody().getStatements());
     }
 
     private T getElementFromRatio(HashMap<T, Double> ratio) {

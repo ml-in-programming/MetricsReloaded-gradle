@@ -6,8 +6,7 @@ import org.jetbrains.research.groups.ml_methods.utils.BlockOfMethod;
 import java.util.*;
 
 public class BlocksUtils {
-    private BlocksUtils() {
-    }
+    private BlocksUtils() {}
 
     public static <T extends PsiElement> Set<T> getElementsOfBlock(
             BlockOfMethod block, Class<T> aClassElement
@@ -51,5 +50,9 @@ public class BlocksUtils {
     public static <T extends PsiElement> double getFreqOfElementFromBlock(BlockOfMethod block, T element) {
         int count = getCountOfElementFromBlock(block, element);
         return (double)count / block.getStatementsCount();
+    }
+
+    public static BlockOfMethod getBlockFromMethod(PsiMethod method) {
+        return new BlockOfMethod(method.getBody().getStatements());
     }
 }
