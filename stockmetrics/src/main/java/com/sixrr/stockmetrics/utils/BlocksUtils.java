@@ -9,8 +9,7 @@ public class BlocksUtils {
     private BlocksUtils() {}
 
     public static <T extends PsiElement> Set<T> getElementsOfBlock(
-            BlockOfMethod block, Class<T> aClassElement
-    ) {
+            BlockOfMethod block, Class<T> aClassElement) {
         Set<T> result = new HashSet<>();
 
         for (int i = 0; i < block.getStatementsCount(); i++) {
