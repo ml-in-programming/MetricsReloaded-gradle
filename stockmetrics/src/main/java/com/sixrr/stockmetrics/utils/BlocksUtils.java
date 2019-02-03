@@ -18,7 +18,7 @@ public class BlocksUtils {
                         @Override
                         public void visitElement(PsiElement element) {
                             super.visitElement(element);
-                            if (aClassElement.isInstance(element.getClass())) {
+                            if (aClassElement.isAssignableFrom(element.getClass())) {
                                 result.add(aClassElement.cast(element));
                             }
                         }

@@ -16,8 +16,8 @@ public class AbstractCouplingCohesionCalculator<T extends PsiElement> extends Ba
 
     private ArrayList<ExtractionCandidate> candidates;
     private Class<T> aClass;
-    private double coupling;
-    private double cohesion;
+    private double coupling = 0.0;
+    private double cohesion = 0.0;
     private boolean isCouplingMethod;
     private boolean isFirstPlace;
 
@@ -69,6 +69,8 @@ public class AbstractCouplingCohesionCalculator<T extends PsiElement> extends Ba
         BlockOfMethod sourceBlock = BlocksUtils.getBlockFromMethod(sourceMethod);
         BlockOfMethod candidateBlock = candidate.getBlock();
         Set<T> elements = BlocksUtils.getElementsOfBlock(candidateBlock, aClass);
+        if (elements.isEmpty() || (elements.size() == 1 && !isFirstPlace))
+            return;
 
         HashMap<T, Double> ratio = new HashMap<>();
 
