@@ -58,19 +58,23 @@ public class AbstractCouplingCohesionCalculator<T extends PsiElement> extends Ba
             super.visitMethod(method);
             methodCandidates = CandidateUtils.getCandidatesOfMethod(method, candidates);
             for (ExtractionCandidate candidate: methodCandidates) {
-                abstractMethod(candidate);
+                calculateCouplingCohesion(candidate);
                 postMetric(candidate, getResult());
             }
         }
     }
 
-    private void abstractMethod(ExtractionCandidate candidate) {
+    private void calculateCouplingCohesion(ExtractionCandidate candidate) {
+        coupling = 0.0;
+        cohesion = 0.0;
+
         PsiMethod sourceMethod = candidate.getSourceMethod();
         BlockOfMethod sourceBlock = BlocksUtils.getBlockFromMethod(sourceMethod);
         BlockOfMethod candidateBlock = candidate.getBlock();
         Set<T> elements = BlocksUtils.getElementsOfBlock(candidateBlock, aClass);
-        if (elements.isEmpty() || (elements.size() == 1 && !isFirstPlace))
+        if (elements.isEmpty() || (elements.size() == 1 && !isFirstPlace)) {
             return;
+        }
 
         HashMap<T, Double> ratio = new HashMap<>();
 
@@ -83,7 +87,7 @@ public class AbstractCouplingCohesionCalculator<T extends PsiElement> extends Ba
         T bestElem = getElementFromRatio(ratio);
         coupling = ratio.get(bestElem);
 
-        int loc = candidateBlock.getStatementsCount();
+        int loc = BlocksUtils.getNumStatementsRecursively(candidateBlock);
         int count = BlocksUtils.getCountOfElementFromBlock(candidateBlock, bestElem);
         cohesion = (double)count / loc;
 

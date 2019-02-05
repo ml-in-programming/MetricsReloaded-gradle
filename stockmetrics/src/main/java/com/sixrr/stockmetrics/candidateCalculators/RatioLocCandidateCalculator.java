@@ -33,12 +33,13 @@ public class RatioLocCandidateCalculator extends BaseMetricsCalculator {
                 BlockOfMethod blockOfMethod = BlocksUtils.getBlockFromMethod(method);
                 ArrayList<ExtractionCandidate> candidatesOfMethod =
                         CandidateUtils.getCandidatesOfMethod(method, candidates);
+                int numStatementsMethod = BlocksUtils.getNumStatementsRecursively(blockOfMethod);
 
                 for (ExtractionCandidate cand: candidatesOfMethod) {
                     postMetric(
                             cand,
-                            cand.getBlock().getStatementsCount(),
-                            blockOfMethod.getStatementsCount()
+                            BlocksUtils.getNumStatementsRecursively(cand.getBlock()),
+                            numStatementsMethod
                     );
                 }
             }
