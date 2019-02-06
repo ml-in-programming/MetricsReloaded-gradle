@@ -4,6 +4,7 @@ import com.intellij.psi.*;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.refactoring.psi.TypeParametersVisitor;
 import com.sixrr.metrics.utils.MethodUtils;
+import com.sixrr.stockmetrics.utils.TypeUtils;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -26,7 +27,7 @@ public class NumUsedTypesCalculator extends MethodCalculator {
             if (methodNestingDepth == 0) {
                 typeSet = new HashSet<PsiType>();
             }
-            typeSet.add(method.getReturnType());
+            TypeUtils.addTypesFromMethodTo(typeSet, method);
 
             methodNestingDepth++;
             super.visitMethod(method);
@@ -39,20 +40,7 @@ public class NumUsedTypesCalculator extends MethodCalculator {
         @Override
         public void visitElement(PsiElement element) {
             super.visitElement(element);
-
-            boolean isInMethod = PsiTreeUtil.getParentOfType(element, PsiMethod.class) != null;
-            if (!isInMethod)
-                return;
-
-            Method gettingTypeMethod = null;
-            try {
-                gettingTypeMethod = element.getClass().getMethod("getType", (Class<?>[]) null);
-            } catch (NoSuchMethodException | SecurityException ignored) {}
-
-            if (gettingTypeMethod != null)
-                try {
-                    typeSet.add((PsiType) gettingTypeMethod.invoke(element));
-                } catch (IllegalAccessException | InvocationTargetException ignored) {}
+            TypeUtils.tryAddTypeOfElementTo(typeSet, element);
         }
     }
 }

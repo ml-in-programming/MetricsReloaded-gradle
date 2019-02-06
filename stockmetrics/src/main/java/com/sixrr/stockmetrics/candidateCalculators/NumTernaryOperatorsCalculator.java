@@ -25,7 +25,7 @@ public class NumTernaryOperatorsCalculator extends AbstractNumCandidateCalculato
 
             if (!isInsideMethod)
                 return;
-            incrementCounters();
+            updateCounters();
         }
     }
 }

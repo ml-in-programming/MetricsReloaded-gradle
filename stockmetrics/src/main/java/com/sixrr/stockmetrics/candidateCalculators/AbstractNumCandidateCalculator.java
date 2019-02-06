@@ -9,7 +9,6 @@ import com.sixrr.stockmetrics.utils.CandidateUtils;
 import org.jetbrains.research.groups.ml_methods.utils.ExtractionCandidate;
 
 import java.util.ArrayList;
-import java.util.stream.Collectors;
 
 abstract class AbstractNumCandidateCalculator extends BaseMetricsCalculator {
 
@@ -41,8 +40,7 @@ abstract class AbstractNumCandidateCalculator extends BaseMetricsCalculator {
         public void visitMethod(PsiMethod method) {
             if (methodNestingDepth == 0) {
                 methodCandidates = CandidateUtils.getCandidatesOfMethod(method, candidates);
-                counts.clear();
-                methodCandidates.forEach(elem -> counts.add(0));
+                initCounters();
                 isInsideMethod = true;
             }
 
@@ -52,10 +50,31 @@ abstract class AbstractNumCandidateCalculator extends BaseMetricsCalculator {
 
             if (methodNestingDepth == 0 && !MethodUtils.isAbstract(method)) {
                 for (int i = 0; i < methodCandidates.size(); i++) {
-                    postMetric(methodCandidates.get(i), counts.get(i));
+                    postMetric(methodCandidates.get(i), getCounterForCand(i));
                 }
                 candidates.removeAll(methodCandidates);
                 isInsideMethod = false;
+            }
+        }
+
+        protected void initCounters() {
+            counts.clear();
+            methodCandidates.forEach(elem -> counts.add(0));
+        }
+
+        protected int getCounterForCand(int i) {
+            return counts.get(i);
+        }
+
+        protected void updateCounters() {
+            for (int i = 0; i < methodCandidates.size(); i++) {
+                updateCounter(i);
+            }
+        }
+
+        protected void updateCounter(int i) {
+            if (methodCandidates.get(i).isInCandidate()) {
+                counts.set(i, counts.get(i) + 1);
             }
         }
 
@@ -63,14 +82,6 @@ abstract class AbstractNumCandidateCalculator extends BaseMetricsCalculator {
         public void visitStatement(PsiStatement statement) {
             super.visitStatement(statement);
             CandidateUtils.setInsideCandidate(statement, methodCandidates);
-        }
-
-        void incrementCounters() {
-            for (int i = 0; i < methodCandidates.size(); i++) {
-                if (methodCandidates.get(i).isInCandidate()) {
-                    counts.set(i, counts.get(i) + 1);
-                }
-            }
         }
     }
 }

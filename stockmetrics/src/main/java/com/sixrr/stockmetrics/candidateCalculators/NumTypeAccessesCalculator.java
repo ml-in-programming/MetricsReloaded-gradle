@@ -1,10 +1,11 @@
 package com.sixrr.stockmetrics.candidateCalculators;
 
-import com.intellij.psi.PsiElementVisitor;
-import com.intellij.psi.PsiSwitchStatement;
+import com.intellij.psi.*;
+import com.sixrr.stockmetrics.utils.TypeUtils;
 import org.jetbrains.research.groups.ml_methods.utils.ExtractionCandidate;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 
 public class NumTypeAccessesCalculator extends AbstractNumCandidateCalculator {
 
@@ -19,13 +20,46 @@ public class NumTypeAccessesCalculator extends AbstractNumCandidateCalculator {
 
     private class Visitor extends CandidateVisitor {
 
-        @Override
-        public void visitSwitchStatement(PsiSwitchStatement statement) {
-            super.visitSwitchStatement(statement);
+        ArrayList<HashSet<PsiType>> usedTypes;
 
+        @Override
+        protected void initCounters() {
+            if (usedTypes == null) {
+                usedTypes = new ArrayList<>();
+            }
+            usedTypes.clear();
+            methodCandidates.forEach(cand -> usedTypes.add(new HashSet<>()));
+        }
+
+        @Override
+        protected int getCounterForCand(int i) {
+            return usedTypes.get(i).size();
+        }
+
+        @Override
+        public void visitMethod(PsiMethod method) {
+            super.visitMethod(method);
             if (!isInsideMethod)
                 return;
-            incrementCounters();
+
+            for (int i = 0; i < methodCandidates.size(); i++) {
+                if (methodCandidates.get(i).isInCandidate()) {
+                    TypeUtils.addTypesFromMethodTo(usedTypes.get(i), method);
+                }
+            }
+        }
+
+        @Override
+        public void visitElement(PsiElement element) {
+            super.visitElement(element);
+            if (!isInsideMethod)
+                return;
+
+            for (int i = 0; i < methodCandidates.size(); i++) {
+                if (methodCandidates.get(i).isInCandidate()) {
+                    TypeUtils.tryAddTypeOfElementTo(usedTypes.get(i), element);
+                }
+            }
         }
     }
 }

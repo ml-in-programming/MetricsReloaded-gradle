@@ -24,7 +24,7 @@ public class NumLiteralsCalculator extends AbstractNumCandidateCalculator {
 
             if (!isInsideMethod)
                 return;
-            incrementCounters();
+            updateCounters();
         }
     }
 }

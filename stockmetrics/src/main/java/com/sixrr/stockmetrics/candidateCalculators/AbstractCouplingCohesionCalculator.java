@@ -90,7 +90,6 @@ public class AbstractCouplingCohesionCalculator<T extends PsiElement> extends Ba
         int loc = BlocksUtils.getNumStatementsRecursively(candidateBlock);
         int count = BlocksUtils.getCountOfElementFromBlock(candidateBlock, bestElem);
         cohesion = (double)count / loc;
-
     }
 
     private T getElementFromRatio(HashMap<T, Double> ratio) {

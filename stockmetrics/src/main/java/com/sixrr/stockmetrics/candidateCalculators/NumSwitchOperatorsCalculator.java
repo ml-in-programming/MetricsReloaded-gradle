@@ -25,7 +25,7 @@ public class NumSwitchOperatorsCalculator extends AbstractNumCandidateCalculator
 
             if (!isInsideMethod)
                 return;
-            incrementCounters();
+            updateCounters();
         }
     }
 }
