@@ -33,7 +33,7 @@ public class InvocationNewCohesionCandidateMetric extends CandidateMetric {
     @NotNull
     @Override
     public MetricType getType() {
-        return MetricType.Count;
+        return MetricType.Ratio;
     }
 
     @NotNull

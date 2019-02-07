@@ -25,8 +25,7 @@ public class TypeAccessCouplingCohesionCalculator extends AbstractCouplingCohesi
         return new Visitor();
     }
 
-    public class Visitor extends AbstractCouplingCohesionCalculator.CandidateVisitor {
-    }
+    public class Visitor extends AbstractCouplingCohesionCalculator.CandidateVisitor {}
 
     @Override
     protected Set<PsiType> getElementsFromBlock(BlockOfMethod block) {
@@ -56,12 +55,8 @@ public class TypeAccessCouplingCohesionCalculator extends AbstractCouplingCohesi
                 @Override
                 public void visitElement(PsiElement element) {
                     super.visitElement(element);
-                    if (psiType == element) { // todo: delete it
-                        ourCount++;
-                        return;
-                    }
-                    Method gettingTypeMethod = TypeUtils.tryGetGetTypeMethod(element);
 
+                    Method gettingTypeMethod = TypeUtils.tryGetGetTypeMethod(element);
                     if (gettingTypeMethod == null)
                         return;
 

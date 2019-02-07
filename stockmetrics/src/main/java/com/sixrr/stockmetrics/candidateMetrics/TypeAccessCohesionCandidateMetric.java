@@ -31,7 +31,7 @@ public class TypeAccessCohesionCandidateMetric extends CandidateMetric {
     @NotNull
     @Override
     public MetricType getType() {
-        return MetricType.Count;
+        return MetricType.Ratio;
     }
 
     @NotNull
