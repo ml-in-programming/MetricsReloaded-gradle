@@ -8,7 +8,7 @@ import java.util.*;
 public class BlocksUtils {
     private BlocksUtils() {}
 
-    public static <T extends PsiElement> Set<T> getElementsOfBlock(
+    public static <T> Set<T> getElementsOfBlock(
             BlockOfMethod block, Class<T> aClassElement) {
         Set<T> result = new HashSet<>();
 
@@ -29,7 +29,7 @@ public class BlocksUtils {
     }
 
     private static int ourCount = 0;
-    public static <T extends PsiElement> int getCountOfElementFromBlock(BlockOfMethod block, T ourElement) {
+    public static <T> int getCountOfElementFromBlock(BlockOfMethod block, T ourElement) {
         ourCount = 0;
 
         for (int i = 0; i < block.getStatementsCount(); i++) {
@@ -37,7 +37,8 @@ public class BlocksUtils {
                 @Override
                 public void visitReferenceElement(PsiJavaCodeReferenceElement reference) {
                     super.visitReferenceElement(reference);
-                    if (reference.isReferenceTo(ourElement)) {
+
+                    if (reference.isReferenceTo((PsiElement) ourElement)) {
                         ourCount++;
                     }
                 }
@@ -54,7 +55,7 @@ public class BlocksUtils {
         return ourCount;
     }
 
-    public static <T extends PsiElement> double getFreqOfElementFromBlock(BlockOfMethod block, T element) {
+    public static <T> double getFreqOfElementFromBlock(BlockOfMethod block, T element) {
         int count = getCountOfElementFromBlock(block, element);
         return (double)count / getNumStatementsRecursively(block);
     }

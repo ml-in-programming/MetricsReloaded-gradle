@@ -1,18 +1,19 @@
 package com.sixrr.stockmetrics.candidateCalculators;
 
 import com.intellij.psi.JavaRecursiveElementVisitor;
-import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.PsiMethod;
 import com.sixrr.stockmetrics.execution.BaseMetricsCalculator;
 import com.sixrr.stockmetrics.utils.BlocksUtils;
 import com.sixrr.stockmetrics.utils.CandidateUtils;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.research.groups.ml_methods.utils.BlockOfMethod;
 import org.jetbrains.research.groups.ml_methods.utils.ExtractionCandidate;
 
 import java.util.*;
 
-public class AbstractCouplingCohesionCalculator<T extends PsiElement> extends BaseMetricsCalculator {
+public class AbstractCouplingCohesionCalculator<T> extends BaseMetricsCalculator {
 
     private ArrayList<ExtractionCandidate> candidates;
     private Class<T> aClass;
@@ -57,7 +58,7 @@ public class AbstractCouplingCohesionCalculator<T extends PsiElement> extends Ba
         public void visitMethod(PsiMethod method) {
             super.visitMethod(method);
             methodCandidates = CandidateUtils.getCandidatesOfMethod(method, candidates);
-            for (ExtractionCandidate candidate: methodCandidates) {
+            for (ExtractionCandidate candidate : methodCandidates) {
                 calculateCouplingCohesion(candidate);
                 postMetric(candidate, getResult());
             }
@@ -71,16 +72,17 @@ public class AbstractCouplingCohesionCalculator<T extends PsiElement> extends Ba
         PsiMethod sourceMethod = candidate.getSourceMethod();
         BlockOfMethod sourceBlock = BlocksUtils.getBlockFromMethod(sourceMethod);
         BlockOfMethod candidateBlock = candidate.getBlock();
-        Set<T> elements = BlocksUtils.getElementsOfBlock(candidateBlock, aClass);
+
+        Set<T> elements = getElementsFromBlock(candidateBlock);
         if (elements.isEmpty() || (elements.size() == 1 && !isFirstPlace)) {
             return;
         }
 
         HashMap<T, Double> ratio = new HashMap<>();
 
-        for (T e: elements) {
-            double freqCandidate = BlocksUtils.getFreqOfElementFromBlock(candidateBlock, e);
-            double freqMethod = BlocksUtils.getFreqOfElementFromBlock(sourceBlock, e);
+        for (T e : elements) {
+            double freqCandidate = getFreqOfElementFromBlock(candidateBlock, e);
+            double freqMethod = getFreqOfElementFromBlock(sourceBlock, e);
             ratio.put(e, freqCandidate / freqMethod);
         }
 
@@ -88,8 +90,20 @@ public class AbstractCouplingCohesionCalculator<T extends PsiElement> extends Ba
         coupling = ratio.get(bestElem);
 
         int loc = BlocksUtils.getNumStatementsRecursively(candidateBlock);
-        int count = BlocksUtils.getCountOfElementFromBlock(candidateBlock, bestElem);
-        cohesion = (double)count / loc;
+        int count = getCountOfElementFromBlock(candidateBlock, bestElem);
+        cohesion = (double) count / loc;
+    }
+
+    protected Set<T> getElementsFromBlock(BlockOfMethod block) {
+        return BlocksUtils.getElementsOfBlock(block, aClass);
+    }
+
+    protected int getCountOfElementFromBlock(BlockOfMethod block, T elem) {
+        return BlocksUtils.getCountOfElementFromBlock(block, elem);
+    }
+
+    protected double getFreqOfElementFromBlock(BlockOfMethod block, T elem) {
+        return BlocksUtils.getFreqOfElementFromBlock(block, elem);
     }
 
     private T getElementFromRatio(HashMap<T, Double> ratio) {
@@ -101,11 +115,11 @@ public class AbstractCouplingCohesionCalculator<T extends PsiElement> extends Ba
         return getMaxRatio(ratio);
     }
 
-    private T getMaxRatio(HashMap<T, Double> ratio) {
+    private T getMaxRatio(@NotNull HashMap<T, Double> ratio) {
         T maxElem = null;
         Double maxDouble = -1.0;
 
-        for (Map.Entry<T, Double> entry: ratio.entrySet()) {
+        for (Map.Entry<T, Double> entry : ratio.entrySet()) {
             if (entry.getValue() > maxDouble) {
                 maxElem = entry.getKey();
                 maxDouble = entry.getValue();
@@ -114,14 +128,16 @@ public class AbstractCouplingCohesionCalculator<T extends PsiElement> extends Ba
         return maxElem;
     }
 
-    private double getResult() {
+    protected double getResult() {
         return isCouplingMethod ? getCoupling() : getCohesion();
     }
 
+    @Contract(pure = true)
     private double getCoupling() {
         return coupling;
     }
 
+    @Contract(pure = true)
     private double getCohesion() {
         return cohesion;
     }

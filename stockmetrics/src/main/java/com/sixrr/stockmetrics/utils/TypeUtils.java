@@ -10,6 +10,14 @@ import java.util.Set;
 
 public class TypeUtils {
 
+    public static Method tryGetGetTypeMethod(PsiElement element) {
+        Method gettingTypeMethod = null;
+        try {
+            gettingTypeMethod = element.getClass().getMethod("getType", (Class<?>[]) null);
+        } catch (NoSuchMethodException | SecurityException ignored) {}
+        return gettingTypeMethod;
+    }
+
     public static boolean tryAddTypeOfElementTo(Set<PsiType> typeSet, PsiElement element) {
 
         boolean isInMethod = PsiTreeUtil.getParentOfType(element, PsiMethod.class) != null;
@@ -18,10 +26,7 @@ public class TypeUtils {
         if (element instanceof PsiMethod)
             return false;
 
-        Method gettingTypeMethod = null;
-        try {
-            gettingTypeMethod = element.getClass().getMethod("getType", (Class<?>[]) null);
-        } catch (NoSuchMethodException | SecurityException ignored) {}
+        Method gettingTypeMethod = tryGetGetTypeMethod(element);
 
         if (gettingTypeMethod != null) {
             try {
