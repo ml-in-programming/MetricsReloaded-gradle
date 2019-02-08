@@ -19,13 +19,22 @@ public class CandidateUtils {
 
     }
 
-    public static void setInsideCandidate(PsiStatement currentStatement, ArrayList<ExtractionCandidate> candidates) {
+    public static void checkStartOfCandidates(
+            PsiStatement statement,
+            ArrayList<ExtractionCandidate> candidates
+    ) {
         for (ExtractionCandidate candidate: candidates) {
-
-            if (candidate.getStart().equals(currentStatement))
+            if (candidate.getStart().equals(statement))
                 candidate.setInCandidate(true);
+        }
+    }
 
-            if (candidate.getEnd().equals(currentStatement))
+    public static void checkEndOfCandidates(
+            PsiStatement statement,
+            ArrayList<ExtractionCandidate> candidates
+    ) {
+        for (ExtractionCandidate candidate: candidates) {
+            if (candidate.getEnd().equals(statement))
                 candidate.setInCandidate(false);
         }
     }

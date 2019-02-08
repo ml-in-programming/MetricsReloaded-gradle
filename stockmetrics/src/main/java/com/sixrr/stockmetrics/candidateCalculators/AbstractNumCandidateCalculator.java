@@ -1,8 +1,6 @@
 package com.sixrr.stockmetrics.candidateCalculators;
 
-import com.intellij.psi.JavaRecursiveElementVisitor;
-import com.intellij.psi.PsiMethod;
-import com.intellij.psi.PsiStatement;
+import com.intellij.psi.*;
 import com.sixrr.metrics.utils.MethodUtils;
 import com.sixrr.stockmetrics.execution.BaseMetricsCalculator;
 import com.sixrr.stockmetrics.utils.CandidateUtils;
@@ -31,7 +29,7 @@ abstract class AbstractNumCandidateCalculator extends BaseMetricsCalculator {
     }
 
     public class CandidateVisitor extends JavaRecursiveElementVisitor {
-        private int methodNestingDepth = 0;
+        protected int methodNestingDepth = 0;
         ArrayList<ExtractionCandidate> methodCandidates;
         ArrayList<Integer> counts = new ArrayList<>();
         boolean isInsideMethod = false;
@@ -80,8 +78,11 @@ abstract class AbstractNumCandidateCalculator extends BaseMetricsCalculator {
 
         @Override
         public void visitStatement(PsiStatement statement) {
+            CandidateUtils.checkStartOfCandidates(statement, methodCandidates);
+
             super.visitStatement(statement);
-            CandidateUtils.setInsideCandidate(statement, methodCandidates);
+
+            CandidateUtils.checkEndOfCandidates(statement, methodCandidates);
         }
     }
 }

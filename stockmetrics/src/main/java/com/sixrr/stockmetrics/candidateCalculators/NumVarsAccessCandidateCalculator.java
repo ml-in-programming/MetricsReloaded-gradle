@@ -1,23 +1,32 @@
-package com.sixrr.stockmetrics.methodCalculators;
+package com.sixrr.stockmetrics.candidateCalculators;
 
 import com.intellij.psi.*;
 import com.intellij.psi.util.PsiTreeUtil;
-import com.sixrr.metrics.utils.MethodUtils;
+import com.intellij.psi.util.PsiUtil;
+import org.jetbrains.research.groups.ml_methods.utils.ExtractionCandidate;
 
-public class NumLocalVarsAccessCalculator extends NumSimpleElementCalculator {
+import java.util.ArrayList;
+
+public class NumVarsAccessCandidateCalculator extends AbstractNumCandidateCalculator {
+
+    public NumVarsAccessCandidateCalculator(ArrayList<ExtractionCandidate> candidates) {
+        super(candidates);
+    }
 
     @Override
     protected PsiElementVisitor createVisitor() {
-        return new NumLocalVarsAccessCalculator.Visitor();
+        return new NumVarsAccessCandidateCalculator.Visitor();
     }
 
-    private class Visitor extends NumSimpleElementCalculator.Visitor {
+    private class Visitor extends CandidateVisitor {
+
         PsiMethod currentMethod = null;
 
         @Override
         public void visitMethod(PsiMethod method) {
-            if (nestingDepth == 0)
+            if (methodNestingDepth == 0)
                 currentMethod = method;
+
             super.visitMethod(method);
             currentMethod = null;
         }
@@ -25,16 +34,17 @@ public class NumLocalVarsAccessCalculator extends NumSimpleElementCalculator {
         @Override
         public void visitLocalVariable(PsiLocalVariable variable) {
             super.visitLocalVariable(variable);
-            elementsCounter++;
+            if (isInsideMethod)
+                updateCounters();
         }
 
         @Override
         public void visitReferenceElement(PsiJavaCodeReferenceElement reference) {
             super.visitReferenceElement(reference);
             PsiElement elem = reference.resolve();
-            if (elem instanceof PsiLocalVariable &&
+            if (elem instanceof PsiLocalVariable && isInsideMethod &&
                     PsiTreeUtil.isAncestor(currentMethod, elem, true)) {
-                elementsCounter++;
+                updateCounters();
             }
         }
     }
