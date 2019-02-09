@@ -16,16 +16,8 @@ abstract class AbstractNumCandidateCalculator extends BaseMetricsCalculator {
         this.candidates = new ArrayList<>(candidates);
     }
 
-    void postMetric(ExtractionCandidate candidate, int numerator, int denominator) {
-        resultsHolder.postCandidateMetric(metric, candidate, (double) numerator, (double) denominator);
-    }
-
     void postMetric(ExtractionCandidate candidate, int value) {
         resultsHolder.postCandidateMetric(metric, candidate, (double) value);
-    }
-
-    void postMetric(ExtractionCandidate candidate, double value) {
-        resultsHolder.postCandidateMetric(metric, candidate, value);
     }
 
     public class CandidateVisitor extends JavaRecursiveElementVisitor {

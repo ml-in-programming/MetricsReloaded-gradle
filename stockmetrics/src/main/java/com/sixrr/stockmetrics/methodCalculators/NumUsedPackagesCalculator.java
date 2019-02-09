@@ -2,9 +2,12 @@ package com.sixrr.stockmetrics.methodCalculators;
 
 import com.intellij.psi.*;
 import com.intellij.psi.util.PsiTreeUtil;
+import com.sixrr.metrics.utils.ClassUtils;
 import com.sixrr.metrics.utils.MethodUtils;
 
+import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 public class NumUsedPackagesCalculator extends MethodCalculator {
@@ -25,6 +28,12 @@ public class NumUsedPackagesCalculator extends MethodCalculator {
             }
 
             methodNestingDepth++;
+
+            List<PsiPackage> containingPackages = Arrays.asList(
+                    ClassUtils.calculatePackagesRecursive(method)
+            );
+            usedPackages.addAll(containingPackages);
+
             super.visitMethod(method);
             methodNestingDepth--;
             if (methodNestingDepth == 0 && !MethodUtils.isAbstract(method)) {
@@ -33,25 +42,14 @@ public class NumUsedPackagesCalculator extends MethodCalculator {
         }
 
         @Override
-        public void visitElement(PsiElement element) {
-
-            super.visitElement(element);
-
-            PsiReference[] references = element.getReferences();
-            if (references.length == 0)
+        public void visitReferenceElement(PsiJavaCodeReferenceElement reference) {
+            super.visitReferenceElement(reference);
+            if (methodNestingDepth == 0)
                 return;
 
-            boolean isInMethod = PsiTreeUtil.getParentOfType(element, PsiMethod.class) != null;
-            if (!isInMethod)
-                return;
-
-            PsiElement declaration = references[0].resolve();
-            PsiPackage pack = PsiTreeUtil.getParentOfType(declaration, PsiPackage.class);
-
-            while (pack != null) {
-                usedPackages.add(pack);
-                pack = pack.getParentPackage();
-            }
+            PsiElement element = reference.resolve();
+            List<PsiPackage> packages = Arrays.asList(ClassUtils.calculatePackagesRecursive(element));
+            usedPackages.addAll(packages);
         }
     }
 }
