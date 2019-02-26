@@ -58,6 +58,9 @@ public class NumPackageAccessesCalculator extends AbstractNumCandidateCalculator
                 return;
 
             PsiElement element = reference.resolve();
+            if (element == null || element.getContainingFile() == null) // for packages, dirs etc
+                return;
+
             List<PsiPackage> packages = Arrays.asList(ClassUtils.calculatePackagesRecursive(element));
 
             for (int i = 0; i < methodCandidates.size(); i++) {

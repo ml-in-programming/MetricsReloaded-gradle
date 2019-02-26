@@ -30,6 +30,8 @@ public class RatioLocCandidateCalculator extends BaseMetricsCalculator {
             @Override
             public void visitMethod(PsiMethod method) {
                 super.visitMethod(method);
+                if (method.getBody() == null) // abstract method or interface
+                    return;
                 BlockOfMethod blockOfMethod = BlocksUtils.getBlockFromMethod(method);
                 ArrayList<ExtractionCandidate> candidatesOfMethod =
                         CandidateUtils.getCandidatesOfMethod(method, candidates);

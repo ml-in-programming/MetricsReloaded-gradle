@@ -9,6 +9,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.logging.Logger;
 
 public class NumUsedPackagesCalculator extends MethodCalculator {
     private int methodNestingDepth = 0;
@@ -48,6 +49,8 @@ public class NumUsedPackagesCalculator extends MethodCalculator {
                 return;
 
             PsiElement element = reference.resolve();
+            if (element == null || element.getContainingFile() == null) // for packages, dirs etc
+                return;
             List<PsiPackage> packages = Arrays.asList(ClassUtils.calculatePackagesRecursive(element));
             usedPackages.addAll(packages);
         }
