@@ -74,6 +74,7 @@ public final class ClassUtils {
     }
 
     public static PsiPackage[] calculatePackagesRecursive(PsiElement element) {
+
         PsiPackage aPackage = findPackage(element);
         final List<PsiPackage> out = new ArrayList<PsiPackage>();
         while (aPackage != null) {

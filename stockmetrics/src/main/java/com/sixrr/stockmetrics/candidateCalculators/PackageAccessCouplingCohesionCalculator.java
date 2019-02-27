@@ -45,6 +45,9 @@ public class PackageAccessCouplingCohesionCalculator extends AbstractCouplingCoh
                 public void visitReferenceElement(PsiJavaCodeReferenceElement reference) {
                     super.visitReferenceElement(reference);
                     PsiElement elem = reference.resolve();
+                    if (elem == null || elem.getContainingFile() == null)
+                        return;
+
                     PsiPackage[] packages = ClassUtils.calculatePackagesRecursive(elem);
                     result.addAll(Arrays.asList(packages));
                 }
@@ -70,6 +73,10 @@ public class PackageAccessCouplingCohesionCalculator extends AbstractCouplingCoh
                 @Override
                 public void visitReferenceElement(PsiJavaCodeReferenceElement reference) {
                     super.visitReferenceElement(reference);
+                    PsiElement resolved = reference.resolve();
+                    if (resolved == null || resolved.getContainingFile() == null)
+                        return;
+
                     PsiPackage[] packages = ClassUtils.calculatePackagesRecursive(reference.resolve());
                     for (PsiPackage pack: packages) {
                         if (pack == psiPackage)
