@@ -132,7 +132,7 @@ public class MetricsRunImpl implements MetricsRun {
     @Override
     public void postCandidateMetric(@NotNull Metric metric, @NotNull ExtractionCandidate candidate, double value) {
         final MetricsResult results = getResultsForCategory(MetricCategory.ExtractionCandidate);
-        final String measuredCandidate = candidate.toString();
+        final String measuredCandidate = candidate.getId();
         results.postValue(metric, measuredCandidate, value);
         results.setElementForMeasuredObject(measuredCandidate, candidate.getStart());
     }
@@ -190,7 +190,7 @@ public class MetricsRunImpl implements MetricsRun {
     public void postCandidateMetric(@NotNull Metric metric, @NotNull ExtractionCandidate candidate,
                                     double numerator, double denominator) {
         final MetricsResult results = getResultsForCategory(MetricCategory.ExtractionCandidate);
-        final String measuredCandidate = candidate.toString();
+        final String measuredCandidate = candidate.getId();
         results.postValue(metric, measuredCandidate, numerator, denominator);
         results.setElementForMeasuredObject(measuredCandidate, candidate.getStart());
     }

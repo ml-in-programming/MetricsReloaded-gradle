@@ -6,10 +6,20 @@ public final class ExtractionCandidate {
     private BlockOfMethod block;
     private PsiMethod sourceMethod;
     private boolean inCandidate;
+    private final String id;
 
-    public ExtractionCandidate(PsiStatement[] statements, PsiMethod sourceMethod) {
+    public ExtractionCandidate(PsiStatement[] statements, PsiMethod sourceMethod, int uniqueId) {
         this.block = new BlockOfMethod(statements);
         this.sourceMethod = sourceMethod;
+        this.id = "cand_" + uniqueId;
+    }
+
+    public ExtractionCandidate(PsiStatement[] statements, PsiMethod sourceMethod) {
+        this(statements, sourceMethod, 0);
+    }
+
+    public String getId() {
+        return this.id;
     }
 
     public boolean isInCandidate() {
