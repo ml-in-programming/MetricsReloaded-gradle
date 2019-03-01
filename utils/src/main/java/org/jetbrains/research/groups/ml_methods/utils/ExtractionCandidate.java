@@ -49,12 +49,14 @@ public final class ExtractionCandidate {
     @Override
     public String toString() {
 
-        StringBuilder str = new StringBuilder("Candidate of ");
-        str.append(sourceMethod).append(":\n");
+        StringBuilder str = new StringBuilder();//"Candidate of ");
+//        str.append(sourceMethod).append(":\n");
 
         int blockSize = block.getStatementsCount();
         for (int i = 0; i < blockSize; i++) {
             str.append(block.get(i).getText()).append("\n");
+            if (i != blockSize - 1)
+                str.append("\n");
         }
         return str.toString();
     }
